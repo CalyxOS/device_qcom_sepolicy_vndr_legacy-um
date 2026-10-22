@@ -32,7 +32,7 @@ PRODUCT_PRIVATE_SEPOLICY_DIRS := \
     $(QSSI_SEPOLICY_PATH)/generic/product/private \
     $(QSSI_SEPOLICY_PATH)/qva/product/private
 
-ifeq (,$(filter sdm845 sdm710, $(TARGET_BOARD_PLATFORM)))
+ifeq (,$(filter sdm710, $(TARGET_BOARD_PLATFORM)))
     BOARD_VENDOR_SEPOLICY_DIRS := \
        $(BOARD_VENDOR_SEPOLICY_DIRS) \
        $(SEPOLICY_PATH) \
@@ -40,6 +40,12 @@ ifeq (,$(filter sdm845 sdm710, $(TARGET_BOARD_PLATFORM)))
        $(SEPOLICY_PATH)/generic/vendor/common/attribute \
        $(SEPOLICY_PATH)/qva/vendor/ssg \
        $(SEPOLICY_PATH)/qva/vendor/common
+
+    ifeq ($(TARGET_USES_LOGDUMP_AS_METADATA),true)
+        BOARD_SEPOLICY_M4DEFS += vendor_logdump_partition=metadata_block_device
+    else
+        BOARD_VENDOR_SEPOLICY_DIRS += $(SEPOLICY_PATH)/generic/vendor/common/logdump
+    endif
 
     ifeq ($(TARGET_SEPOLICY_DIR),)
       BOARD_VENDOR_SEPOLICY_DIRS += $(SEPOLICY_PATH)/generic/vendor/$(TARGET_BOARD_PLATFORM)
@@ -65,7 +71,7 @@ ifeq (,$(filter sdm845 sdm710, $(TARGET_BOARD_PLATFORM)))
     endif
 endif
 
-ifneq (,$(filter sdm845 sdm710, $(TARGET_BOARD_PLATFORM)))
+ifneq (,$(filter sdm710, $(TARGET_BOARD_PLATFORM)))
     BOARD_VENDOR_SEPOLICY_DIRS := \
                  $(BOARD_VENDOR_SEPOLICY_DIRS) \
                  $(SEPOLICY_PATH) \
